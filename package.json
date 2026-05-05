@@ -1,0 +1,46 @@
+{
+  "name": "the-pelvic-floor",
+  "version": "1.0.0",
+  "description": "The complete, un-embarrassing guide to pelvic floor health",
+  "type": "module",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8"
+  },
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:server\" \"pnpm dev:client\"",
+    "dev:client": "vite",
+    "dev:server": "tsx watch server/index.mjs",
+    "build": "pnpm build:client",
+    "build:client": "vite build",
+    "start": "NODE_ENV=production node server/index.mjs",
+    "seed": "node src/scripts/seed.mjs",
+    "write": "node src/scripts/writing-engine.mjs --count=1",
+    "cron": "node src/scripts/cron.mjs"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.18.2",
+    "node-cron": "^3.0.3",
+    "openai": "^4.47.1",
+    "pg": "^8.11.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
+    "serve-static": "^1.15.0"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.7.5",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "@types/pg": "^8.11.6",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "concurrently": "^8.2.2",
+    "esbuild": "^0.21.3",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}

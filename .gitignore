@@ -1,0 +1,35 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.production
+
+# ZERO IMAGES IN REPO — build-blocking rule
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.avif
+*.svg
+*.ico
+*.bmp
+*.tiff
+*.tif
+*.heic
+*.heif
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
