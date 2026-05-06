@@ -3,14 +3,13 @@
  * Runs inside the Express process via node-cron.
  * NOT scheduled via Manus or any external scheduler.
  *
- * Phase schedule (§15D):
- *   Phase 1 (articles 1-30):    2/day  — "ramp"
- *   Phase 2 (articles 31-100):  3/day  — "grow"
- *   Phase 3 (articles 101-250): 4/day  — "scale"
- *   Phase 4 (articles 251-500): 5/day  — "authority"
+ * Phase schedule:
+ *   Phase 1 (days 1–40 from first publish): 5/day  — "burst"
+ *   Phase 2 (day 41+):                      1/weekday (Mon–Fri) — "steady"
  *
- * Cron fires at 06:00, 10:00, 14:00, 18:00, 22:00 UTC.
- * Each slot checks if it should publish based on current phase.
+ * Cron fires at 06:00, 10:00, 14:00, 18:00, 22:00 UTC (5 slots/day).
+ * Phase 1: all 5 slots publish (5/day).
+ * Phase 2: only the 09:00 UTC slot publishes on Mon–Fri (1/weekday).
  */
 import cron from 'node-cron';
 import path from 'path';
@@ -22,6 +21,12 @@ const ROOT = path.resolve(__dirname, '../..');
 const DATA_PATH = path.join(ROOT, 'data', 'articles.json');
 const SITEMAP_LOCK = path.join(ROOT, 'data', '.sitemap-dirty');
 
+// Day 1 of Phase 1 is the date of the first published article.
+// If no articles published yet, Phase 1 starts on first publish.
+const PHASE1_DAYS = 40;
+const PHASE1_PER_DAY = 5;
+const PHASE2_PER_DAY = 1; // weekdays only
+
 function loadArticles() {
   if (!existsSync(DATA_PATH)) return [];
   return JSON.parse(readFileSync(DATA_PATH, 'utf8'));
@@ -31,11 +36,29 @@ function saveArticles(articles) {
   writeFileSync(DATA_PATH, JSON.stringify(articles, null, 2));
 }
 
-function getPhase(publishedCount) {
-  if (publishedCount < 30) return { phase: 1, perDay: 2, label: 'ramp' };
-  if (publishedCount < 100) return { phase: 2, perDay: 3, label: 'grow' };
-  if (publishedCount < 250) return { phase: 3, perDay: 4, label: 'scale' };
-  return { phase: 4, perDay: 5, label: 'authority' };
+/**
+ * Returns the phase object based on elapsed days since first publish.
+ * Phase 1: days 1–40 → 5/day (all days)
+ * Phase 2: day 41+   → 1/weekday (Mon–Fri only)
+ */
+function getPhase(articles) {
+  const published = articles.filter(a => a.status === 'published' && a.publishedAt);
+  if (published.length === 0) {
+    return { phase: 1, perDay: PHASE1_PER_DAY, label: 'burst', weekdayOnly: false };
+  }
+
+  // Find earliest publishedAt
+  const sorted = published.sort((a, b) => new Date(a.publishedAt) - new Date(b.publishedAt));
+  const firstPublish = new Date(sorted[0].publishedAt);
+  const now = new Date();
+  const daysSinceFirst = Math.floor((now - firstPublish) / (1000 * 60 * 60 * 24));
+
+  if (daysSinceFirst < PHASE1_DAYS) {
+    const daysLeft = PHASE1_DAYS - daysSinceFirst;
+    return { phase: 1, perDay: PHASE1_PER_DAY, label: `burst (${daysLeft}d left)`, weekdayOnly: false };
+  }
+
+  return { phase: 2, perDay: PHASE2_PER_DAY, label: 'steady (1/weekday)', weekdayOnly: true };
 }
 
 function getPublishedTodayCount(articles) {
@@ -47,7 +70,12 @@ function getPublishedTodayCount(articles) {
   ).length;
 }
 
-// Spread publish times across the day to look organic to Google
+function isWeekday() {
+  const day = new Date().getUTCDay(); // 0=Sun, 6=Sat
+  return day >= 1 && day <= 5;
+}
+
+// Spread publish times slightly within the slot to look organic
 function getPublishTime() {
   const now = new Date();
   const minutes = Math.floor(Math.random() * 30);
@@ -59,7 +87,6 @@ function getPublishTime() {
 
 export function publishOne() {
   const articles = loadArticles();
-  const published = articles.filter(a => a.status === 'published');
   const queued = articles.filter(a => a.status === 'queued' && a.qualityGate?.passed !== false);
 
   if (queued.length === 0) {
@@ -67,7 +94,14 @@ export function publishOne() {
     return null;
   }
 
-  const { perDay, phase, label } = getPhase(published.length);
+  const { perDay, phase, label, weekdayOnly } = getPhase(articles);
+
+  // Phase 2: only publish on weekdays
+  if (weekdayOnly && !isWeekday()) {
+    console.log(`[publisher] Phase ${phase} (${label}): skipping — not a weekday.`);
+    return null;
+  }
+
   const publishedToday = getPublishedTodayCount(articles);
 
   if (publishedToday >= perDay) {
@@ -75,7 +109,7 @@ export function publishOne() {
     return null;
   }
 
-  // Pick oldest queued article
+  // Pick oldest queued article (FIFO)
   const sorted = queued.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
   const article = sorted[0];
 
@@ -100,28 +134,49 @@ export function getPublisherStatus() {
   const published = articles.filter(a => a.status === 'published');
   const queued = articles.filter(a => a.status === 'queued');
   const failed = articles.filter(a => a.qualityGate?.passed === false);
-  const { phase, perDay, label } = getPhase(published.length);
+  const { phase, perDay, label, weekdayOnly } = getPhase(articles);
   const publishedToday = getPublishedTodayCount(articles);
+
+  // Estimate days of content remaining
+  const weekdayRate = PHASE2_PER_DAY * 5; // per week
+  const daysLeft = weekdayOnly
+    ? Math.floor(queued.length / PHASE2_PER_DAY)
+    : Math.floor(queued.length / PHASE1_PER_DAY);
 
   return {
     total: articles.length,
     published: published.length,
     queued: queued.length,
     failed: failed.length,
-    phase, perDay, label,
+    phase,
+    perDay,
+    label,
+    weekdayOnly,
     publishedToday,
     remainingToday: Math.max(0, perDay - publishedToday),
-    daysOfContent: Math.floor(queued.length / perDay),
+    daysOfContent: daysLeft,
   };
 }
 
 // ─── CRON SCHEDULE ────────────────────────────────────────────────────────────
-// 5 slots per day: 06:00, 10:00, 14:00, 18:00, 22:00 UTC
-// Phase determines how many of these slots actually publish
+// Phase 1 (days 1–40): 5 slots fire — 06:00, 10:00, 14:00, 18:00, 22:00 UTC
+// Phase 2 (day 41+):   1 slot fires on weekdays — 09:00 UTC Mon–Fri
+// The phase check inside publishOne() handles which slots actually publish.
 export function startPublisherCron() {
-  const slots = ['0 6 * * *', '0 10 * * *', '0 14 * * *', '0 18 * * *', '0 22 * * *'];
+  // Phase 1 slots: all 5 fire daily, publishOne() caps at 5/day
+  const phase1Slots = [
+    '0 6 * * *',
+    '0 10 * * *',
+    '0 14 * * *',
+    '0 18 * * *',
+    '0 22 * * *',
+  ];
 
-  for (const slot of slots) {
+  // Phase 2 slot: weekdays only at 09:00 UTC
+  // publishOne() also checks isWeekday() as a belt-and-suspenders guard
+  const phase2Slot = '0 9 * * 1-5';
+
+  for (const slot of phase1Slots) {
     cron.schedule(slot, () => {
       try {
         publishOne();
@@ -131,7 +186,19 @@ export function startPublisherCron() {
     }, { timezone: 'UTC' });
   }
 
-  console.log('[publisher] Cron publisher started — 5 daily slots, phase-aware.');
+  // Phase 2 weekday slot (also fires in Phase 1 but perDay cap prevents double-publishing)
+  cron.schedule(phase2Slot, () => {
+    try {
+      publishOne();
+    } catch (e) {
+      console.error(`[publisher] Cron error: ${e.message}`);
+    }
+  }, { timezone: 'UTC' });
+
+  console.log('[publisher] Cron publisher started.');
+  console.log('[publisher]   Phase 1 (days 1–40): 5/day — slots at 06, 10, 14, 18, 22 UTC');
+  console.log('[publisher]   Phase 2 (day 41+):   1/weekday — slot at 09 UTC Mon–Fri');
+
   const status = getPublisherStatus();
-  console.log(`[publisher] Status: Phase ${status.phase} (${status.label}), ${status.published} published, ${status.queued} queued, ${status.perDay}/day`);
+  console.log(`[publisher] Current: Phase ${status.phase} (${status.label}), ${status.published} published, ${status.queued} queued`);
 }
