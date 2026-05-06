@@ -41,7 +41,7 @@ services:
         value: pelvic-healing
       - key: BUNNY_API_KEY
         type: SECRET
-        value: 703457e5-2ce2-466a-b53ba58ea1b9-728f-4e7c
+        value: YOUR_BUNNY_API_KEY
       - key: BUNNY_CDN_URL
         value: https://pelvic-healing.b-cdn.net
       - key: AMAZON_TAG

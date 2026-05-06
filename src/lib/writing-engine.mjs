@@ -158,7 +158,7 @@ Remember: Oracle Lover voice. Contractions everywhere. Short sentences mixed wit
 
 // ─── OPENAI CLIENT ────────────────────────────────────────────────────────────
 function getClient() {
-  const apiKey = process.env.OPENAI_API_KEY || 'sk-82bdad0a1fd34987b73030504ae67080';
+  const apiKey = process.env.OPENAI_API_KEY;
   const baseURL = process.env.OPENAI_BASE_URL || 'https://api.deepseek.com';
   return new OpenAI({ apiKey, baseURL });
 }

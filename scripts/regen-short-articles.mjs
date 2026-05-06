@@ -33,7 +33,7 @@ const ASIN_POOL = [
 ];
 
 const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || 'sk-82bdad0a1fd34987b73030504ae67080',
+  apiKey: process.env.OPENAI_API_KEY,
   baseURL: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com',
 });
 

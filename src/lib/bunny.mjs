@@ -6,7 +6,7 @@
 import https from 'https';
 
 const BUNNY_STORAGE_ZONE = 'pelvic-healing';
-const BUNNY_API_KEY = '703457e5-2ce2-466a-b53ba58ea1b9-728f-4e7c';
+const BUNNY_API_KEY = process.env.BUNNY_API_KEY || '703457e5-2ce2-466a-b53ba58ea1b9-728f-4e7c';
 const BUNNY_STORAGE_ENDPOINT = 'ny.storage.bunnycdn.com';
 export const BUNNY_PULL_ZONE = 'https://pelvic-healing.b-cdn.net';
 
