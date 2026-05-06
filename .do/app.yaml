@@ -1,11 +1,11 @@
-name: the-pelvic-floor
+name: yourpelvic-healing
 region: nyc
 
 services:
   - name: web
     source_dir: /
     github:
-      repo: YOUR_GITHUB_ORG/the-pelvic-floor
+      repo: peacefulgeek/yourpelvic-healing
       branch: main
       deploy_on_push: true
     build_command: pnpm install --frozen-lockfile && pnpm build
@@ -27,26 +27,30 @@ services:
       - key: PORT
         value: "3000"
       - key: SITE_URL
-        value: https://thepelvicfloor.com
+        value: https://yourpelvichealing.com
       - key: OPENAI_API_KEY
         type: SECRET
-        value: YOUR_OPENAI_API_KEY
+        value: sk-82bdad0a1fd34987b73030504ae67080
+      - key: OPENAI_BASE_URL
+        value: https://api.deepseek.com
+      - key: OPENAI_MODEL
+        value: deepseek-v4-pro
+      - key: AUTO_GEN_ENABLED
+        value: "true"
       - key: BUNNY_STORAGE_ZONE
-        type: SECRET
-        value: YOUR_BUNNY_STORAGE_ZONE
+        value: pelvic-healing
       - key: BUNNY_API_KEY
         type: SECRET
-        value: YOUR_BUNNY_API_KEY
+        value: 703457e5-2ce2-466a-b53ba58ea1b9-728f-4e7c
       - key: BUNNY_CDN_URL
-        value: https://YOUR_BUNNY_CDN_URL
-      - key: DATABASE_URL
-        type: SECRET
-        value: YOUR_DATABASE_URL
+        value: https://pelvic-healing.b-cdn.net
+      - key: AMAZON_TAG
+        value: spankyspinola-20
 
-# Optional: Add a managed PostgreSQL database
-# databases:
-#   - name: pelvic-floor-db
-#     engine: PG
-#     version: "15"
-#     size: db-s-dev-database
-#     num_nodes: 1
+domains:
+  - domain: yourpelvichealing.com
+    type: PRIMARY
+  - domain: www.yourpelvichealing.com
+    type: ALIAS
+
+# No database — file-based JSON store only (§ site spec: keep it simple)

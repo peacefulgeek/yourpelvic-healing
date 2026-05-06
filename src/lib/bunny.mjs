@@ -1,66 +1,74 @@
-// HARDCODE per site. DO NOT move these to env vars.
-const BUNNY_STORAGE_ZONE = 'pelvic-floor';
-const BUNNY_API_KEY      = 'BUNNY_KEY_PLACEHOLDER';  // Paul will provide
-const BUNNY_PULL_ZONE    = 'https://pelvic-floor.b-cdn.net';
-const BUNNY_HOSTNAME     = 'ny.storage.bunnycdn.com';
-
 /**
- * Pick a random library image, copy it to /images/{slug}.webp, return the public URL.
- * Falls back to the library URL itself if the copy upload fails.
+ * Bunny CDN — The Pelvic Floor
+ * Storage zone: pelvic-healing | Pull zone: pelvic-healing.b-cdn.net
+ * Credentials hardcoded per §9 (safe per site scope)
  */
-export async function assignHeroImage(slug) {
-  const idx = String(Math.floor(Math.random() * 40) + 1).padStart(2, '0');
-  const sourceFile = `lib-${idx}.webp`;
-  const destFile   = `${slug}.webp`;
+import https from 'https';
 
-  try {
-    const sourceUrl = `${BUNNY_PULL_ZONE}/library/${sourceFile}`;
-    const downloadRes = await fetch(sourceUrl);
-    if (!downloadRes.ok) throw new Error(`download ${downloadRes.status}`);
-    const imageBuffer = await downloadRes.arrayBuffer();
+const BUNNY_STORAGE_ZONE = 'pelvic-healing';
+const BUNNY_API_KEY = '703457e5-2ce2-466a-b53ba58ea1b9-728f-4e7c';
+const BUNNY_STORAGE_ENDPOINT = 'ny.storage.bunnycdn.com';
+export const BUNNY_PULL_ZONE = 'https://pelvic-healing.b-cdn.net';
 
-    const uploadUrl = `https://${BUNNY_HOSTNAME}/${BUNNY_STORAGE_ZONE}/images/${destFile}`;
-    const uploadRes = await fetch(uploadUrl, {
+export async function uploadToBunny(remotePath, buffer, contentType = 'image/webp') {
+  return new Promise((resolve, reject) => {
+    const cleanPath = remotePath.replace(/^\//, '');
+    const options = {
       method: 'PUT',
-      headers: { AccessKey: BUNNY_API_KEY, 'Content-Type': 'image/webp' },
-      body: imageBuffer,
+      hostname: BUNNY_STORAGE_ENDPOINT,
+      path: `/${BUNNY_STORAGE_ZONE}/${cleanPath}`,
+      headers: {
+        AccessKey: BUNNY_API_KEY,
+        'Content-Type': contentType,
+        'Content-Length': buffer.length,
+      },
+    };
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve({ ok: true, path: cleanPath, url: `${BUNNY_PULL_ZONE}/${cleanPath}` });
+        } else {
+          reject(new Error(`Bunny upload failed: ${res.statusCode} ${data}`));
+        }
+      });
     });
-    if (!uploadRes.ok) throw new Error(`upload ${uploadRes.status}`);
-    return `${BUNNY_PULL_ZONE}/images/${destFile}`;
-  } catch (err) {
-    console.warn(`[bunny.assignHeroImage] copy failed (${err.message}), falling back to library URL`);
-    return `${BUNNY_PULL_ZONE}/library/${sourceFile}`;
-  }
-}
-
-/**
- * Upload an arbitrary WebP buffer to a target path under the storage zone.
- */
-export async function uploadWebP(targetPath, buffer) {
-  const url = `https://${BUNNY_HOSTNAME}/${BUNNY_STORAGE_ZONE}/${targetPath.replace(/^\//, '')}`;
-  const res = await fetch(url, {
-    method: 'PUT',
-    headers: { AccessKey: BUNNY_API_KEY, 'Content-Type': 'image/webp' },
-    body: buffer,
+    req.on('error', reject);
+    req.write(buffer);
+    req.end();
   });
-  if (!res.ok) throw new Error(`bunny upload ${res.status} for ${targetPath}`);
-  return `${BUNNY_PULL_ZONE}/${targetPath.replace(/^\//, '')}`;
 }
 
-export function getBunnyPullZone() {
-  return BUNNY_PULL_ZONE;
-}
-
-export function getLibraryImageUrl(index) {
-  const idx = String(index).padStart(2, '0');
-  return `${BUNNY_PULL_ZONE}/library/lib-${idx}.webp`;
+export async function deleteFromBunny(remotePath) {
+  return new Promise((resolve, reject) => {
+    const cleanPath = remotePath.replace(/^\//, '');
+    const options = {
+      method: 'DELETE',
+      hostname: BUNNY_STORAGE_ENDPOINT,
+      path: `/${BUNNY_STORAGE_ZONE}/${cleanPath}`,
+      headers: { AccessKey: BUNNY_API_KEY },
+    };
+    const req = https.request(options, (res) => {
+      resolve(res.statusCode >= 200 && res.statusCode < 300);
+    });
+    req.on('error', reject);
+    req.end();
+  });
 }
 
 export function getArticleImageUrl(slug) {
   return `${BUNNY_PULL_ZONE}/images/${slug}.webp`;
 }
 
-// Font URLs on Bunny CDN
+export function getOgImageUrl(slug) {
+  return `${BUNNY_PULL_ZONE}/images/og-${slug}.webp`;
+}
+
+export function getDefaultOgUrl() {
+  return `${BUNNY_PULL_ZONE}/images/og-default.webp`;
+}
+
 export const FONT_URLS = {
   crimsonProBold: `${BUNNY_PULL_ZONE}/fonts/CrimsonPro-Bold.woff2`,
   crimsonProSemiBold: `${BUNNY_PULL_ZONE}/fonts/CrimsonPro-SemiBold.woff2`,

@@ -10,6 +10,7 @@ import PrivacyPage from './pages/PrivacyPage';
 import AssessmentsPage from './pages/AssessmentsPage';
 import AssessmentPage from './pages/AssessmentPage';
 import NotFoundPage from './pages/NotFoundPage';
+import SupplementsPage from './pages/SupplementsPage';
 import './styles/global.css';
 
 interface AppProps {
@@ -29,6 +30,7 @@ export function App({ ssrData = {} }: AppProps) {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/recommended" element={<RecommendedPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/supplements" element={<SupplementsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />

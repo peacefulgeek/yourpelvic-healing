@@ -30,14 +30,15 @@ export function Navigation() {
       role="navigation"
       aria-label="Main navigation"
     >
-      <Link to="/" className="nav-logo" aria-label="The Pelvic Floor — Home">
-        The Pelvic Floor
+      <Link to="/" className="nav-logo" aria-label="Your Pelvic Healing — Home">
+        Your Pelvic Healing
       </Link>
 
       <ul className={`nav-links ${menuOpen ? 'open' : ''}`} role="list">
         <li><Link to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
         <li><Link to="/articles" onClick={() => setMenuOpen(false)}>Articles</Link></li>
         <li><Link to="/assessments" onClick={() => setMenuOpen(false)}>Assessments</Link></li>
+        <li><Link to="/supplements" onClick={() => setMenuOpen(false)}>Supplements</Link></li>
         <li><Link to="/recommended" onClick={() => setMenuOpen(false)}>Recommended</Link></li>
         <li><Link to="/about" onClick={() => setMenuOpen(false)}>About</Link></li>
       </ul>

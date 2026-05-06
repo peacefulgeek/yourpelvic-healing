@@ -46,7 +46,7 @@ export function getArticles({ page = 1, limit = 12, category = '', status = 'pub
   }
 
   // Sort by published_at desc
-  articles.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+  articles.sort((a, b) => new Date(b.publishedAt||b.published_at||0) - new Date(a.publishedAt||a.published_at||0));
 
   const total = articles.length;
   const pages = Math.ceil(total / limit);

@@ -3,33 +3,33 @@ dist/
 .env
 .env.local
 .env.production
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# ZERO IMAGES IN REPO — build-blocking rule
+# ZERO IMAGES IN REPO — §9 hard rule
+# All images must be on Bunny CDN as compressed WebP
+# ONE exception: public/favicon.svg (inline SVG, no binary)
 *.jpg
 *.jpeg
 *.png
 *.gif
 *.webp
 *.avif
-*.svg
 *.ico
 *.bmp
 *.tiff
 *.tif
 *.heic
 *.heif
+*.svg
+!public/favicon.svg
 
-# Logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Editor
-.vscode/
-.idea/
-*.swp
-*.swo
+# Seed logs
+nohup.out
