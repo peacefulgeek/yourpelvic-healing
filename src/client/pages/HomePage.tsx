@@ -50,7 +50,7 @@ export default function HomePage({ ssrData }: HomePageProps) {
       <section className="home-hero" aria-label="Site introduction">
         <div
           className="home-hero-bg"
-          style={{ backgroundImage: 'url(/images/hero-home.jpg)' }}
+          style={{ backgroundImage: 'url(https://pelvic-healing.b-cdn.net/images/hero-home.webp)' }}
           aria-hidden="true"
         />
         <div className="home-hero-overlay" aria-hidden="true" />
@@ -143,7 +143,7 @@ export default function HomePage({ ssrData }: HomePageProps) {
       <section className="assessment-cta-section" aria-labelledby="assessment-cta-heading">
         <div
           className="assessment-cta-bg"
-          style={{ backgroundImage: 'url(/images/hero-exercises.jpg)' }}
+          style={{ backgroundImage: 'url(https://pelvic-healing.b-cdn.net/images/hero-exercises.webp)' }}
           aria-hidden="true"
         />
         <div className="assessment-cta-overlay" aria-hidden="true" />
@@ -203,7 +203,7 @@ export default function HomePage({ ssrData }: HomePageProps) {
           <div className="feature-grid">
             <div
               className="feature-image"
-              style={{ backgroundImage: 'url(/images/hero-postpartum.jpg)' }}
+              style={{ backgroundImage: 'url(https://pelvic-healing.b-cdn.net/images/hero-postpartum.webp)' }}
               aria-hidden="true"
             />
             <div className="feature-content">
@@ -246,7 +246,7 @@ export default function HomePage({ ssrData }: HomePageProps) {
             </div>
             <div
               className="feature-image"
-              style={{ backgroundImage: 'url(/images/hero-pelvic-pt.jpg)' }}
+              style={{ backgroundImage: 'url(https://pelvic-healing.b-cdn.net/images/hero-pelvic-pt.webp)' }}
               aria-hidden="true"
             />
           </div>

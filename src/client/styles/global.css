@@ -893,13 +893,9 @@
 .home-hero-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    #2D1B2E 0%,
-    #3D2040 30%,
-    #4A2550 60%,
-    #221825 100%
-  );
+  background-color: #2D1B2E;
+  background-size: cover;
+  background-position: center;
 }
 
 .home-hero-pattern {

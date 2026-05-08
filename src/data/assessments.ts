@@ -46,7 +46,7 @@ export const SYMPTOM_SCREENER: Assessment = {
   subtitle: 'Find out what your symptoms might be telling you',
   description:
     "This is not a diagnosis. It's a starting point. Answer these questions honestly and get a personalized summary of what your symptoms might indicate — and what to do next.",
-  heroImage: '/images/card-assessment.jpg',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-assessment.webp',
   estimatedTime: '3–5 minutes',
   questions: [
     {
@@ -282,7 +282,7 @@ export const HYPERTONIC_QUIZ: Assessment = {
   subtitle: 'The question that changes everything about your treatment',
   description:
     "Tight and weak are opposite problems that need opposite solutions. Kegels fix weakness and make tightness worse. This quiz helps you understand which pattern your symptoms fit — so you stop doing the wrong thing.",
-  heroImage: '/images/card-dysfunction.jpg',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-dysfunction.webp',
   estimatedTime: '2–3 minutes',
   questions: [
     {
@@ -453,7 +453,7 @@ export const POSTPARTUM_QUIZ: Assessment = {
   subtitle: 'Are you ready to return to exercise? Here\'s what your body is telling you.',
   description:
     "The 6-week clearance is not a green light for everything. This assessment helps you understand where you are in your postpartum recovery and what's safe to do — and what to wait on.",
-  heroImage: '/images/hero-postpartum.jpg',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-postpartum.webp',
   estimatedTime: '3–4 minutes',
   questions: [
     {
@@ -611,7 +611,7 @@ export const PELVIC_PAIN_QUIZ: Assessment = {
   title: 'Pelvic Pain Pattern Identifier',
   subtitle: 'What type of pelvic pain are you experiencing?',
   description: "Pelvic pain has many causes. This assessment helps identify your pain pattern and points you toward the right type of care.",
-  heroImage: 'https://pelvic-healing.b-cdn.net/images/assessment-pain.webp',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-pain.webp',
   estimatedTime: '5-6 minutes',
   scoringLogic: 'sum',
   questions: [
@@ -635,7 +635,7 @@ export const BLADDER_HEALTH_QUIZ: Assessment = {
   title: 'Bladder Health Check',
   subtitle: 'How healthy is your bladder?',
   description: "Bladder symptoms are common but not normal. This assessment helps you understand your bladder health and whether you need support.",
-  heroImage: 'https://pelvic-healing.b-cdn.net/images/assessment-bladder.webp',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-incontinence.webp',
   estimatedTime: '4 minutes',
   scoringLogic: 'sum',
   questions: [
@@ -660,7 +660,7 @@ export const MENOPAUSE_QUIZ: Assessment = {
   title: 'Menopause & Pelvic Floor Assessment',
   subtitle: 'How is menopause affecting your pelvic floor?',
   description: "Estrogen loss changes everything below the belt. This assessment helps you understand how perimenopause and menopause are affecting your pelvic floor.",
-  heroImage: 'https://pelvic-healing.b-cdn.net/images/assessment-menopause.webp',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-anatomy.webp',
   estimatedTime: '5 minutes',
   scoringLogic: 'sum',
   questions: [
@@ -683,7 +683,7 @@ export const DIASTASIS_QUIZ: Assessment = {
   title: 'Diastasis Recti Self-Check',
   subtitle: 'Do you have abdominal separation?',
   description: "Diastasis recti affects up to 60 percent of pregnant and postpartum women. This assessment helps you understand if you might have it and what to do next.",
-  heroImage: 'https://pelvic-healing.b-cdn.net/images/assessment-diastasis.webp',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-postpartum.webp',
   estimatedTime: '4 minutes',
   scoringLogic: 'sum',
   questions: [
@@ -706,7 +706,7 @@ export const SEXUAL_HEALTH_QUIZ: Assessment = {
   title: 'Sexual Health & Pelvic Floor Check',
   subtitle: 'Is your pelvic floor affecting your sex life?',
   description: "Painful sex, low libido, and difficulty with orgasm are often pelvic floor issues. This assessment helps you understand the connection.",
-  heroImage: 'https://pelvic-healing.b-cdn.net/images/assessment-sexual-health.webp',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-pain.webp',
   estimatedTime: '5 minutes',
   scoringLogic: 'sum',
   questions: [
@@ -729,7 +729,7 @@ export const GUT_PELVIC_QUIZ: Assessment = {
   title: 'Gut & Pelvic Floor Connection Check',
   subtitle: 'Is your gut affecting your pelvic floor?',
   description: "The gut and pelvic floor are deeply connected. Constipation, IBS, and straining all affect pelvic floor function. Find out if your gut is part of your pelvic floor story.",
-  heroImage: 'https://pelvic-healing.b-cdn.net/images/assessment-gut.webp',
+  heroImage: 'https://pelvic-healing.b-cdn.net/images/hero-dysfunction.webp',
   estimatedTime: '4 minutes',
   scoringLogic: 'sum',
   questions: [

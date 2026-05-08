@@ -4,7 +4,7 @@
  * NOT scheduled via Manus or any external scheduler.
  *
  * Phase schedule:
- *   Phase 1 (days 1–40 from first publish): 5/day  — "burst"
+ *   Phase 1 (days 1–40 from first publish): 5/day  — "burst" (ramp-up)
  *   Phase 2 (day 41+):                      1/weekday (Mon–Fri) — "steady"
  *
  * Cron fires at 06:00, 10:00, 14:00, 18:00, 22:00 UTC (5 slots/day).

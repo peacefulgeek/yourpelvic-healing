@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: yourpelvic-healing
+    runtime: node
+    repo: https://github.com/peacefulgeek/yourpelvic-healing
+    branch: main
+
+    # Build command — installs deps and compiles the Vite client bundle
+    buildCommand: pnpm install --frozen-lockfile && pnpm build
+
+    # Start command — runs the Express server (serves SSR + static + crons)
+    startCommand: node server/index.mjs
+
+    # Render injects PORT automatically; server reads process.env.PORT || 3000
+    plan: starter          # upgrade to standard for always-on (no spin-down)
+    region: oregon         # us-west-2 — change to frankfurt for EU
+
+    # Health check — Render will restart the service if this fails
+    healthCheckPath: /api/articles?limit=1
+
+    # Environment variables
+    # Set these in the Render dashboard → Environment tab
+    # DO NOT commit secrets to this file
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SITE_URL
+        value: https://yourpelvichealing.com
+      # Writing engine — DeepSeek V4-Pro via OpenAI-compatible API
+      - key: OPENAI_API_KEY
+        sync: false          # set manually in Render dashboard
+      - key: OPENAI_BASE_URL
+        value: https://api.deepseek.com
+      - key: OPENAI_MODEL
+        value: deepseek-v4-pro
+      # Bunny CDN — storage write key (read-only key is public)
+      - key: BUNNY_API_KEY
+        sync: false          # set manually in Render dashboard
+      # Auto-publish cron enable flag
+      - key: AUTO_GEN_ENABLED
+        value: "true"
+
+    # Persistent disk — REQUIRED to preserve articles.json across deploys
+    # Without this, every deploy resets to the committed articles.json snapshot
+    # Render Starter plan includes 1 GB disk free
+    disk:
+      name: pelvic-data
+      mountPath: /opt/render/project/src/data
+      # This matches: src/lib/articles-store.mjs → path.join(__dirname, '../../data')
+      sizeGB: 1
+
+    # Custom domain — add after DNS is pointed to Render
+    # domains:
+    #   - yourpelvichealing.com
+    #   - www.yourpelvichealing.com   # Render handles www→apex redirect
